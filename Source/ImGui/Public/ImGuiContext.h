@@ -24,11 +24,15 @@ struct IMGUI_API FImGuiViewportData
 	TWeakPtr<SImGuiOverlay> Overlay = nullptr;
 };
 
-DECLARE_MULTICAST_DELEGATE(FImGuiOnPreFrame)
+DECLARE_MULTICAST_DELEGATE_OneParam(FImGuiOnPostCreateContext, ImGuiContext*);
+DECLARE_MULTICAST_DELEGATE(FImGuiOnPreFrame);
 
 class IMGUI_API FImGuiContext : public TSharedFromThis<FImGuiContext>
 {
 public:
+	/// Callback executed right after creating an ImGui context.
+	static FImGuiOnPostCreateContext& GetOnPostCreateContext();
+
 	/// Callback executed right before starting a new ImGui frame
 	FImGuiOnPreFrame OnPreFrame;
 

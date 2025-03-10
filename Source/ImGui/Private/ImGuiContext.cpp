@@ -310,6 +310,12 @@ static bool ImGui_OpenInShell(ImGuiContext* Context, const char* Path)
 	return FPlatformProcess::LaunchFileInDefaultExternalApplication(UTF8_TO_TCHAR(Path));
 }
 
+FImGuiOnPostCreateContext& FImGuiContext::GetOnPostCreateContext()
+{
+	static FImGuiOnPostCreateContext OnPostCreateContext;
+	return OnPostCreateContext;
+}
+
 const FString& FImGuiContext::GetDefaultFontPath()
 {
 	static const FString FontPath{FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Regular.ttf")};
@@ -380,6 +386,8 @@ void FImGuiContext::Initialize()
 		*IniFilename,
 		IniFilename.Len() + 1);
 	IO.IniFilename = IniFilenameUtf8;
+
+	GetOnPostCreateContext().Broadcast(Context);
 
 	const FString LogFilename = FPaths::ProjectLogDir() / ContextName + TEXT(".log");
 	FPlatformString::Convert(
